@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A beginner-friendly FAQ assistant prototype built with HTML, CSS, and JavaScript.">
+  <title>FAQ Assistant — Help Center Demo</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #172033;
+      --muted: #667085;
+      --line: #e5eaf2;
+      --surface: #ffffff;
+      --page: #f5f7fb;
+      --accent: #4f46e5;
+      --accent-dark: #3730a3;
+      --accent-soft: #eef2ff;
+      --success: #087e67;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      background: radial-gradient(circle at 50% 0%, #e9edff 0, var(--page) 36rem);
+    }
+    .topbar {
+      width: min(1080px, calc(100% - 36px));
+      margin: 0 auto;
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .brand { display: flex; align-items: center; gap: 11px; font-weight: 750; letter-spacing: -.03em; }
+    .brand-mark {
+      display: grid; place-items: center; width: 40px; height: 40px; border-radius: 13px;
+      color: white; background: var(--accent); box-shadow: 0 7px 18px #4f46e533;
+      font-size: 19px;
+    }
+    .brand small { display: block; color: var(--muted); font-size: 11px; font-weight: 650; letter-spacing: .13em; margin-top: 2px; }
+    .demo-tag { border: 1px solid #d9defe; border-radius: 999px; padding: 8px 11px; color: var(--accent-dark); background: #fff9; font-size: 11px; font-weight: 800; letter-spacing: .07em; white-space: nowrap; }
+    main { width: min(820px, calc(100% - 36px)); margin: 47px auto 0; }
+    .intro { text-align: center; margin-bottom: 28px; }
+    .eyebrow { color: var(--accent); font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 12px 0 12px; font-size: clamp(34px, 6vw, 52px); line-height: 1.05; letter-spacing: -.055em; }
+    .intro p { margin: 0 auto; max-width: 570px; color: var(--muted); font-size: 16px; line-height: 1.7; }
+    .search-card { background: var(--surface); padding: clamp(18px, 4vw, 30px); border: 1px solid #e7eaf3; border-radius: 23px; box-shadow: 0 20px 55px #25345b0d; }
+    label { display: block; margin-bottom: 10px; font-size: 13px; font-weight: 750; }
+    .search-row { display: flex; gap: 10px; }
+    input {
+      flex: 1; min-width: 0; padding: 15px 16px; border: 1px solid #d9deea; border-radius: 12px;
+      color: var(--ink); background: #fff; font: inherit; outline: none; transition: border-color .2s, box-shadow .2s;
+    }
+    input:focus { border-color: var(--accent); box-shadow: 0 0 0 4px #4f46e51c; }
+    .search-button { border: 0; border-radius: 12px; padding: 0 21px; color: white; background: var(--accent); font: inherit; font-weight: 750; cursor: pointer; transition: background .2s, transform .2s; }
+    .search-button:hover { background: var(--accent-dark); }
+    .search-button:active { transform: translateY(1px); }
+    .examples-title { margin: 23px 0 11px; color: var(--muted); font-size: 12px; font-weight: 750; }
+    .examples { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; color: #414b62; background: #fff; font: inherit; font-size: 12px; cursor: pointer; }
+    .chip:hover { color: var(--accent-dark); border-color: #bfc6ff; background: var(--accent-soft); }
+    .result { display: none; margin-top: 17px; padding: 20px; border: 1px solid #dce3f0; border-radius: 16px; background: #fbfcff; }
+    .result.visible { display: block; }
+    .result-label { display: flex; align-items: center; gap: 8px; color: var(--success); font-size: 11px; font-weight: 850; letter-spacing: .1em; text-transform: uppercase; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; background: #10a583; }
+    .result h2 { margin: 12px 0 8px; font-size: 19px; letter-spacing: -.02em; }
+    .result p { margin: 0; color: #536078; font-size: 14px; line-height: 1.75; white-space: pre-line; }
+    .result .hint { margin-top: 13px; color: var(--muted); font-size: 11px; }
+    .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 16px 0 44px; }
+    .info-card { padding: 20px; border: 1px solid #e5eaf2; border-radius: 17px; background: #ffffffb8; }
+    .info-icon { display: grid; place-items: center; width: 34px; height: 34px; margin-bottom: 12px; border-radius: 11px; background: var(--accent-soft); color: var(--accent); font-weight: 850; }
+    .info-card h3 { margin: 0 0 7px; font-size: 14px; }
+    .info-card p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.65; }
+    footer { padding: 23px 18px 30px; color: var(--muted); font-size: 11px; text-align: center; }
+    footer strong { color: #45506a; }
+    @media (max-width: 560px) {
+      .topbar { width: calc(100% - 28px); padding: 17px 0; }
+      main { width: calc(100% - 28px); margin-top: 36px; }
+      .search-row { flex-direction: column; }
+      .search-button { min-height: 48px; }
+      .bottom-grid { grid-template-columns: 1fr; }
+      .demo-tag { font-size: 9px; padding: 7px 8px; }
+      .brand { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true">?</div>
+      <div>HELPDESK <small>FAQ ASSISTANT</small></div>
+    </div>
+    <div class="demo-tag">INTERACTIVE DEMO · NO API REQUIRED</div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="eyebrow">A simple support experience</div>
+      <h1 id="page-title">How can we help?</h1>
+      <p>Ask a question and this FAQ assistant will look for a matching answer in its example knowledge base.</p>
+    </section>
+
+    <section class="search-card" aria-label="FAQ search">
+      <form id="search-form">
+        <label for="question-input">What would you like to know?</label>
+        <div class="search-row">
+          <input id="question-input" name="question" type="search" placeholder="e.g. How long does shipping take?" autocomplete="off" aria-describedby="search-help">
+          <button class="search-button" type="submit">Find answer&nbsp; →</button>
+        </div>
+        <div id="search-help" class="examples-title">TRY AN EXAMPLE QUESTION</div>
+        <div class="examples" id="example-questions">
+          <button class="chip" type="button" data-question="How long does shipping take?">Shipping times</button>
+          <button class="chip" type="button" data-question="Can I return an item?">Returns & refunds</button>
+          <button class="chip" type="button" data-question="What payment methods do you accept?">Payment methods</button>
+          <button class="chip" type="button" data-question="How can I track my order?">Track an order</button>
+        </div>
+      </form>
+      <section class="result" id="result" aria-live="polite" aria-atomic="true">
+        <div class="result-label"><span class="dot" aria-hidden="true"></span><span id="result-label">Suggested answer</span></div>
+        <h2 id="result-title"></h2>
+        <p id="result-answer"></p>
+        <div class="hint" id="result-hint"></div>
+      </section>
+    </section>
+
+    <section class="bottom-grid" aria-label="About this demo">
+      <article class="info-card">
+        <div class="info-icon" aria-hidden="true">⌕</div>
+        <h3>Search curated answers</h3>
+        <p>The prototype compares your question with predefined FAQ topics and keywords to suggest a relevant answer.</p>
+      </article>
+      <article class="info-card">
+        <div class="info-icon" aria-hidden="true">↗</div>
+        <h3>Built for learning</h3>
+        <p>Made with HTML, CSS, and vanilla JavaScript. It runs in your browser and does not call an external AI service.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer><strong>FAQ Assistant Prototype</strong> · Example content for a portfolio learning project</footer>
+
+  <script>
+    // Example FAQ knowledge base. Replace this sample content with your own FAQs.
+    const faqs = [
+      {
+        id: "shipping",
+        question: "How long does shipping take?",
+        keywords: ["shipping", "ship", "delivery", "deliver", "arrive", "arrival", "shipping time"],
+        answer: "In this demo, standard shipping is estimated at 3–5 business days. Actual delivery times depend on the store and destination."
+      },
+      {
+        id: "returns",
+        question: "Can I return or exchange an item?",
+        keywords: ["return", "returns", "refund", "exchange", "send back", "wrong size", "damaged"],
+        answer: "In this demo, eligible items can be returned within 30 days of delivery if they are unused and in their original condition. Keep your order confirmation when contacting support."
+      },
+      {
+        id: "payment",
+        question: "What payment methods do you accept?",
+        keywords: ["payment", "pay", "paid", "credit card", "debit card", "paypal", "checkout", "payment method"],
+        answer: "This sample FAQ lists credit cards, debit cards, and PayPal as example payment methods. A real business should update this answer to match its actual checkout options."
+      },
+      {
+        id: "tracking",
+        question: "How can I track my order?",
+        keywords: ["track", "tracking", "order status", "package", "parcel", "where is my order", "shipment"],
+        answer: "In a real store, open your shipping confirmation email and use its tracking link. This prototype does not connect to an order-management or shipping system."
+      },
+      {
+        id: "contact",
+        question: "How can I contact customer support?",
+        keywords: ["contact", "support", "help desk", "email", "phone", "customer service", "talk to someone"],
+        answer: "This demo has no live support team. For a production version, add the business's verified support email, phone number, or contact-page link here."
+      },
+      {
+        id: "hours",
+        question: "What are your business hours?",
+        keywords: ["hours", "opening", "open", "close", "closing time", "business hours", "working hours"],
+        answer: "Business hours have not been configured for this demo. Replace this answer with the business's current operating schedule and time zone."
+      },
+      {
+        id: "discounts",
+        question: "Do you offer discounts or promo codes?",
+        keywords: ["discount", "discounts", "coupon", "promo", "promotion", "sale", "voucher", "offer"],
+        answer: "Discounts vary by business. In a live FAQ, list any active promotions and explain where customers can enter a valid code at checkout."
+      },
+      {
+        id: "privacy",
+        question: "How is my personal information used?",
+        keywords: ["privacy", "personal information", "personal data", "data", "secure", "security", "information"],
+        answer: "This standalone demo does not send your question to a server. A real service should link to its own privacy policy and clearly explain how customer data is collected and used."
+      }
+    ];
+
+    const stopWords = new Set(["a", "an", "and", "are", "about", "can", "do", "does", "for", "how", "i", "in", "is", "it", "me", "my", "of", "on", "or", "please", "take", "tell", "the", "there", "to", "what", "when", "where", "which", "who", "why", "with", "you", "your"]);
+    const form = document.getElementById("search-form");
+    const input = document.getElementById("question-input");
+    const result = document.getElementById("result");
+    const resultLabel = document.getElementById("result-label");
+    const resultTitle = document.getElementById("result-title");
+    const resultAnswer = document.getElementById("result-answer");
+    const resultHint = document.getElementById("result-hint");
+
+    function normalize(value) {
+      return value.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    function findBestFaq(userQuestion) {
+      const normalizedQuestion = normalize(userQuestion);
+      const words = normalizedQuestion.split(" ").filter(word => word.length > 2 && !stopWords.has(word));
+      if (!words.length) return null;
+
+      let bestFaq = null;
+      let bestScore = 0;
+      for (const faq of faqs) {
+        let score = 0;
+        const allFaqText = normalize(faq.question + " " + faq.keywords.join(" "));
+        for (const keyword of faq.keywords) {
+          if (normalizedQuestion.includes(normalize(keyword))) {
+            score += keyword.includes(" ") ? 4 : 3;
+          }
+        }
+        for (const word of words) {
+          if (allFaqText.split(" ").includes(word)) score += 1;
+        }
+        if (score > bestScore) {
+          bestScore = score;
+          bestFaq = faq;
+        }
+      }
+      return bestScore >= 3 ? bestFaq : null;
+    }
+
+    function showResult(title, answer, options = {}) {
+      result.classList.add("visible");
+      resultLabel.textContent = options.label || "Suggested answer";
+      resultTitle.textContent = title;
+      resultAnswer.textContent = answer;
+      resultHint.textContent = options.hint || "Matched from the demo FAQ knowledge base using keyword rules.";
+    }
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      const question = input.value.trim();
+      if (!question) {
+        showResult("Enter a question to get started", "Type a question in the search box, or choose one of the example questions.", { label: "Question needed", hint: "You can try terms such as shipping, returns, payment, tracking, or privacy." });
+        input.focus();
+        return;
+      }
+      const match = findBestFaq(question);
+      if (match) {
+        showResult(match.question, match.answer);
+      } else {
+        showResult("We couldn't find a matching FAQ", "Try asking about shipping, returns, payment methods, tracking an order, support, business hours, discounts, or privacy.", { label: "No close match", hint: "This prototype uses keyword matching. It does not understand every possible wording like an AI language model might." });
+      }
+    });
+
+    document.getElementById("example-questions").addEventListener("click", function (event) {
+      const button = event.target.closest("button[data-question]");
+      if (!button) return;
+      input.value = button.dataset.question;
+      form.requestSubmit();
+    });
+  </script>
+</body>
+</html>
